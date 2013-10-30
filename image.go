@@ -57,7 +57,11 @@ func (im *Image) Clone() (*Image, error) {
 
 // Dispose frees the resources assocciated with the image.
 // If you try to use a disposed image, you'll get undefined
-// behavior.
+// behavior. Please, note that you don't need to call Dispose
+// manually, images will eventually be freed when there are no
+// more references to them. However, this function provided in
+// case you want to immediately free the memory once you're
+// done with an image.
 func (im *Image) Dispose() {
 	if im.image != nil {
 		if im.parent == nil {
