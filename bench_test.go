@@ -28,6 +28,6 @@ func BenchmarkResizePngNative(b *testing.B) {
 	}
 	b.ResetTimer()
 	for ii := 0; ii < b.N; ii++ {
-		_ = resize.Resize(240, 180, im, resize.Lanczos2)
+		_ = resize.Resize(240, 180, im, resize.Lanczos2Lut)
 	}
 }
