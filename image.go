@@ -110,7 +110,7 @@ func (im *Image) Encode(w io.Writer, info *Info) error {
 	if mem == nil {
 		return exError(&ex, "encoding")
 	}
-	b := C.GoBytes(mem, C.int(s))
+	b := goBytes(mem, int(s))
 	w.Write(b)
 	C.free(mem)
 	return nil
