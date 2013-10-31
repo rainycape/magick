@@ -45,6 +45,18 @@ func (in *Info) SetQuality(q uint) {
 	in.info.quality = magickSize(q)
 }
 
+// Colorspace returns the colorspace used when encoding the image.
+func (in *Info) Colorspace() Colorspace {
+	return Colorspace(in.info.colorspace)
+}
+
+// SetColorspace set the colorspace used when encoding the image.
+// Note that not all colorspaces are supported for encoding. See
+// the documentation on Colorspace.
+func (in *Info) SetColorspace(cs Colorspace) {
+	in.info.colorspace = C.ColorspaceType(cs)
+}
+
 // NewInfo returns a newly allocated *Info structure. Do not
 // create Info objects directly, since they need to allocate
 // some internal structures while being created.

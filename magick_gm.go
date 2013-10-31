@@ -8,6 +8,7 @@ package magick
 import "C"
 
 import (
+	"fmt"
 	"unsafe"
 )
 
@@ -32,6 +33,12 @@ func magickSize(v uint) C.ulong {
 
 func imageToBlob(info *Info, im *Image, s *C.size_t, ex *C.ExceptionInfo) unsafe.Pointer {
 	return C.ImageToBlob(info.info, im.image, s, ex)
+}
+
+type notImplementedError string
+
+func (e notImplementedError) Error() string {
+	return fmt.Sprintf("magick does not implement %s when built against GraphicsMagick. Build magick against ImageMagick to use it.", string(e))
 }
 
 func cleanup() {
