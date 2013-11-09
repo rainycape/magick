@@ -28,10 +28,7 @@ func (im *Image) statistics() (*Statistics, error) {
 	return newStatistics(stats), nil
 }
 
-func newChannelStatistics(ch *C.ChannelStatistics) *ChannelStatistics {
-	if ch == nil {
-		return nil
-	}
+func newChannelStatistics(ch C.ChannelStatistics) *ChannelStatistics {
 	return &ChannelStatistics{
 		Minimum:  float64(ch.minima),
 		Maximum:  float64(ch.maxima),
@@ -45,7 +42,7 @@ func newChannelStatistics(ch *C.ChannelStatistics) *ChannelStatistics {
 
 func newStatistics(stats *C.ChannelStatistics) *Statistics {
 	count := C.OpacityChannel + 1
-	var channels []*C.ChannelStatistics
+	var channels []C.ChannelStatistics
 	sliceHeader := (*reflect.SliceHeader)((unsafe.Pointer(&channels)))
 	sliceHeader.Cap = count
 	sliceHeader.Len = count
