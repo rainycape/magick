@@ -30,13 +30,13 @@ func (im *Image) statistics() (*Statistics, error) {
 
 func newChannelStatistics(ch C.ChannelStatistics) *ChannelStatistics {
 	return &ChannelStatistics{
-		Minimum:  float64(ch.minima),
-		Maximum:  float64(ch.maxima),
-		Mean:     float64(ch.mean),
-		StdDev:   float64(ch.standard_deviation),
-		Variance: float64(ch.variance),
-		Kurtosis: float64(ch.kurtosis),
-		Skewness: float64(ch.skewness),
+		Minimum:  float64(ch.minima / C.QuantumRange),
+		Maximum:  float64(ch.maxima / C.QuantumRange),
+		Mean:     float64(ch.mean / C.QuantumRange),
+		StdDev:   float64(ch.standard_deviation / C.QuantumRange),
+		Variance: float64(ch.variance / C.QuantumRange),
+		Kurtosis: float64(ch.kurtosis / C.QuantumRange),
+		Skewness: float64(ch.skewness / C.QuantumRange),
 	}
 }
 

@@ -3,6 +3,9 @@ package magick
 // #include <magick/api.h>
 import "C"
 
+// ChannelStatistics includes several statistics about
+// a color channel. Magick normalizes All fields in this
+// structure to the interval [0, 1].
 type ChannelStatistics struct {
 	Minimum  float64
 	Maximum  float64
