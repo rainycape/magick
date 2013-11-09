@@ -28,7 +28,7 @@ func (im *Image) statistics() (*Statistics, error) {
 	return newStatistics(stats), nil
 }
 
-func newChannelStatistics(ch C.ChannelStatistics) *ChannelStatistics {
+func newChannelStatistics(ch *C.ChannelStatistics) *ChannelStatistics {
 	return &ChannelStatistics{
 		Minimum:  float64(ch.minima / C.QuantumRange),
 		Maximum:  float64(ch.maxima / C.QuantumRange),
@@ -47,9 +47,9 @@ func newStatistics(stats *C.ChannelStatistics) *Statistics {
 	sliceHeader.Cap = count
 	sliceHeader.Len = count
 	sliceHeader.Data = uintptr(unsafe.Pointer(stats))
-	red := newChannelStatistics(channels[C.RedChannel])
-	green := newChannelStatistics(channels[C.GreenChannel])
-	blue := newChannelStatistics(channels[C.BlueChannel])
-	opacity := newChannelStatistics(channels[C.OpacityChannel])
+	red := newChannelStatistics(&channels[C.RedChannel])
+	green := newChannelStatistics(&channels[C.GreenChannel])
+	blue := newChannelStatistics(&channels[C.BlueChannel])
+	opacity := newChannelStatistics(&channels[C.OpacityChannel])
 	return &Statistics{red, green, blue, opacity}
 }
