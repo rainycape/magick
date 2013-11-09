@@ -22,7 +22,7 @@ func (im *Image) statistics() (*Statistics, error) {
 		// logging.
 		defer C.RelinquishMagickMemory(unsafe.Pointer(stats))
 	}
-	if ex.severity != C.UndefinedException {
+	if stats == nil || ex.severity != C.UndefinedException {
 		return nil, exError(&ex, "getting statistics")
 	}
 	return newStatistics(stats), nil
