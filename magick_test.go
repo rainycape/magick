@@ -233,6 +233,17 @@ func TestCropResizeAnimated(t *testing.T) {
 	testImage(t, res, 10, 100, 100, 8, "GIF")
 }
 
+func TestAverage(t *testing.T) {
+	im := decodeFile(t, "lenna.jpg")
+	avg, err := im.AverageColor()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if avg.Red != 133 || avg.Green != 80 || avg.Blue != 68 {
+		t.Errorf("expected (133, 80, 68), got %+v instead", *avg)
+	}
+}
+
 func BenchmarkRefUnref(b *testing.B) {
 	im := decodeFile(b, "wizard.png")
 	img := im.image

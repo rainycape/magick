@@ -47,3 +47,16 @@ func (im *Image) IsPalette() (bool, error) {
 	}
 	return int(b) != 0, nil
 }
+
+func (im *Image) AverageColor() (*Pixel, error) {
+	stats, err := im.statistics()
+	if err != nil {
+		return nil, err
+	}
+	return &Pixel{
+		Red:     uint8(stats.Red.Mean * 255),
+		Green:   uint8(stats.Green.Mean * 255),
+		Blue:    uint8(stats.Blue.Mean * 255),
+		Opacity: uint8(stats.Opacity.Mean * 255),
+	}, nil
+}
