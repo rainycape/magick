@@ -116,6 +116,13 @@ func (im *Image) Encode(w io.Writer, info *Info) error {
 	return nil
 }
 
+// Image returns the underlying *C.Image. This is useful for
+// calling GM or IM directly and performing operations which
+// are not yet supported by magick.
+func (im *Image) Image() *C.Image {
+	return im.image
+}
+
 func Decode(r io.Reader) (*Image, error) {
 	data, err := ioutil.ReadAll(r)
 	if err != nil {
