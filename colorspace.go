@@ -10,23 +10,23 @@ type Colorspace C.ColorspaceType
 
 const (
 	RGB           Colorspace = C.RGBColorspace         // Red, Green, Blue colorspace.
-	GRAY                     = C.GRAYColorspace        // Similar to Luma (Y) according to ITU-R 601
-	TRANSPARENT              = C.TransparentColorspace // RGB which preserves the matte while quantizing colors.
-	OHTA                     = C.OHTAColorspace
-	XYZ                      = C.XYZColorspace // CIE XYZ
-	YCC                      = C.YCCColorspace // Kodak PhotoCD PhotoYCC
-	YIQ                      = C.YIQColorspace
-	YPBPR                    = C.YPbPrColorspace
-	YUV                      = C.YUVColorspace         // YUV colorspace as used for computer video.
-	CMYK                     = C.CMYKColorspace        // Cyan, Magenta, Yellow, Black colorspace.
-	SRGB                     = C.sRGBColorspace        // Kodak PhotoCD sRGB
-	HSL                      = C.HSLColorspace         // Hue, saturation, luminosity
-	HWB                      = C.HWBColorspace         // Hue, whiteness, blackness
-	LAB                      = C.LABColorspace         // ITU LAB
-	REC_601_LUMA             = C.Rec601LumaColorspace  // Luma (Y) according to ITU-R 601
-	REC_601_YCBCR            = C.Rec601YCbCrColorspace // YCbCr according to ITU-R 601
-	REC_709_LUMA             = C.Rec709LumaColorspace  // Luma (Y) according to ITU-R 709
-	REC_709_YCBCR            = C.Rec709YCbCrColorspace // YCbCr according to ITU-R 709
+	GRAY          Colorspace = C.GRAYColorspace        // Similar to Luma (Y) according to ITU-R 601
+	TRANSPARENT   Colorspace = C.TransparentColorspace // RGB which preserves the matte while quantizing colors.
+	OHTA          Colorspace = C.OHTAColorspace
+	XYZ           Colorspace = C.XYZColorspace // CIE XYZ
+	YCC           Colorspace = C.YCCColorspace // Kodak PhotoCD PhotoYCC
+	YIQ           Colorspace = C.YIQColorspace
+	YPBPR         Colorspace = C.YPbPrColorspace
+	YUV           Colorspace = C.YUVColorspace         // YUV colorspace as used for computer video.
+	CMYK          Colorspace = C.CMYKColorspace        // Cyan, Magenta, Yellow, Black colorspace.
+	SRGB          Colorspace = C.sRGBColorspace        // Kodak PhotoCD sRGB
+	HSL           Colorspace = C.HSLColorspace         // Hue, saturation, luminosity
+	HWB           Colorspace = C.HWBColorspace         // Hue, whiteness, blackness
+	LAB           Colorspace = C.LABColorspace         // ITU LAB
+	REC_601_LUMA  Colorspace = C.Rec601LumaColorspace  // Luma (Y) according to ITU-R 601
+	REC_601_YCBCR Colorspace = C.Rec601YCbCrColorspace // YCbCr according to ITU-R 601
+	REC_709_LUMA  Colorspace = C.Rec709LumaColorspace  // Luma (Y) according to ITU-R 709
+	REC_709_YCBCR Colorspace = C.Rec709YCbCrColorspace // YCbCr according to ITU-R 709
 )
 
 func (c Colorspace) String() string {
