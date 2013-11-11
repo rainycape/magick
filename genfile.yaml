@@ -1,5 +1,7 @@
 strings:
-    include: Operator
+    include: Operator|Colorspace|Filter
     options:
         Operator:
             slice: 2:
+        Filter:
+            slice: 1:

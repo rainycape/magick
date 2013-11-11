@@ -29,48 +29,6 @@ const (
 	REC_709_YCBCR Colorspace = C.Rec709YCbCrColorspace // YCbCr according to ITU-R 709
 )
 
-func (c Colorspace) String() string {
-	switch c {
-	case RGB:
-		return "RGB"
-	case GRAY:
-		return "GRAY"
-	case TRANSPARENT:
-		return "TRANSPARENT"
-	case OHTA:
-		return "OHTA"
-	case XYZ:
-		return "XYZ"
-	case YCC:
-		return "YCC"
-	case YIQ:
-		return "YIQ"
-	case YPBPR:
-		return "YPBPR"
-	case YUV:
-		return "YUV"
-	case CMYK:
-		return "CMYK"
-	case SRGB:
-		return "SRGB"
-	case HSL:
-		return "HSL"
-	case HWB:
-		return "HWB"
-	case LAB:
-		return "LAB"
-	case REC_601_LUMA:
-		return "REC_601_LUMA"
-	case REC_601_YCBCR:
-		return "REC_601_YCBCR"
-	case REC_709_LUMA:
-		return "REC_709_LUMA"
-	case REC_709_YCBCR:
-		return "REC_709_YCBCR"
-	}
-	return "UNDEFINED"
-}
-
 // Colorspace returns the image colorspace.
 func (im *Image) Colorspace() Colorspace {
 	return Colorspace(im.image.colorspace)

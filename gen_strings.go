@@ -1,6 +1,82 @@
 package magick
 
 // AUTOMATICALLY GENERATED WITH gondola gen -- DO NOT EDIT!
+func (c Colorspace) String() string {
+	switch c {
+	case CMYK:
+		return "CMYK"
+	case GRAY:
+		return "GRAY"
+	case HSL:
+		return "HSL"
+	case HWB:
+		return "HWB"
+	case LAB:
+		return "LAB"
+	case OHTA:
+		return "OHTA"
+	case REC_601_LUMA:
+		return "REC_601_LUMA"
+	case REC_601_YCBCR:
+		return "REC_601_YCBCR"
+	case REC_709_LUMA:
+		return "REC_709_LUMA"
+	case REC_709_YCBCR:
+		return "REC_709_YCBCR"
+	case RGB:
+		return "RGB"
+	case SRGB:
+		return "SRGB"
+	case TRANSPARENT:
+		return "TRANSPARENT"
+	case XYZ:
+		return "XYZ"
+	case YCC:
+		return "YCC"
+	case YIQ:
+		return "YIQ"
+	case YPBPR:
+		return "YPBPR"
+	case YUV:
+		return "YUV"
+	}
+	return "unknown colorspace"
+}
+func (f Filter) String() string {
+	switch f {
+	case FBessel:
+		return "Bessel"
+	case FBlackman:
+		return "Blackman"
+	case FBox:
+		return "Box"
+	case FCatrom:
+		return "Catrom"
+	case FCubic:
+		return "Cubic"
+	case FGaussian:
+		return "Gaussian"
+	case FHamming:
+		return "Hamming"
+	case FHanning:
+		return "Hanning"
+	case FHermite:
+		return "Hermite"
+	case FLanczos:
+		return "Lanczos"
+	case FMitchell:
+		return "Mitchell"
+	case FPoint:
+		return "Point"
+	case FQuadratic:
+		return "Quadratic"
+	case FSinc:
+		return "Sinc"
+	case FTriangle:
+		return "Triangle"
+	}
+	return "unknown filter"
+}
 func (o Operator) String() string {
 	switch o {
 	case OpAdd:
