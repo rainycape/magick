@@ -86,8 +86,16 @@ func testEntropy(t *testing.T, name string, entropy float32) {
 	}
 }
 
-func TestDecode(t *testing.T) {
+func TestInfo(t *testing.T) {
 	t.Logf("Using backend %s", Backend())
+	if formats, err := SupportedFormats(); err != nil {
+		t.Error(err)
+	} else {
+		t.Logf("%d supported formats %v", len(formats), formats)
+	}
+}
+
+func TestDecode(t *testing.T) {
 	im := decodeFile(t, "wizard.png")
 	testImage(t, im, 1, 1104, 1468, 8, "PNG")
 	cloned, err := im.Clone()

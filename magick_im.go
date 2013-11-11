@@ -9,6 +9,7 @@ import "C"
 
 import (
 	"fmt"
+	"reflect"
 	"unsafe"
 )
 
@@ -33,6 +34,26 @@ func magickSize(v uint) C.size_t {
 
 func imageToBlob(info *Info, im *Image, s *C.size_t, ex *C.ExceptionInfo) unsafe.Pointer {
 	return unsafe.Pointer(C.ImagesToBlob(info.info, im.image, s, ex))
+}
+
+func freeMagickMemory(p unsafe.Pointer) {
+	C.RelinquishMagickMemory(p)
+}
+
+func supportedFormats(ex *C.ExceptionInfo) ([]*C.MagickInfo, unsafe.Pointer) {
+	var count C.size_t
+	patt := C.CString("")
+	info := C.GetMagickInfoList(patt, &count, ex)
+	if info == nil {
+		return nil, nil
+	}
+	var infos []*C.MagickInfo
+	header := (*reflect.SliceHeader)(unsafe.Pointer(&infos))
+	header.Len = int(count)
+	header.Cap = header.Len
+	p := unsafe.Pointer(info)
+	header.Data = uintptr(p)
+	return infos, p
 }
 
 type notImplementedError string
