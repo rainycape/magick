@@ -55,7 +55,7 @@ func (im *Image) operateChannel(op Operator, ch Channel, value float64) error {
 	case OpXor:
 		cop = C.XorEvaluateOperator
 	default:
-		return notImplementedError(fmt.Sprintf("operator %d", op))
+		return notImplementedError(fmt.Sprintf("operator %s", op))
 	}
 	var ex C.ExceptionInfo
 	C.GetExceptionInfo(&ex)

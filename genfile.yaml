@@ -1,0 +1,5 @@
+strings:
+    include: Operator
+    options:
+        Operator:
+            slice: 2:
