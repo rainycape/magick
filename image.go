@@ -14,6 +14,14 @@ import (
 	"unsafe"
 )
 
+// Image represents an in-memory decoded image.
+// Some images (like e.g. GIF animations) might have
+// multiple frames. Unless indicated otherwise, functions
+// work in the same way with both single a multi-frame images,
+// performing coalescing when needed. To operate on a single
+// frame use e.g. im.Frame(i).Resize() instead of im.Resize().
+// Frames might be added or removed with list related functions,
+// like Append() or Remove().
 type Image struct {
 	image     *C.Image
 	parent    *Image
@@ -21,27 +29,38 @@ type Image struct {
 	mu        sync.Mutex
 }
 
-/* Image attributes */
+// Width returns the image width in pixels.
 func (im *Image) Width() int {
 	return int(im.image.columns)
 }
 
+// Height returns the image height in pixels.
 func (im *Image) Height() int {
 	return int(im.image.rows)
 }
 
+// Format returns the format used to decode
+// this image.
 func (im *Image) Format() string {
 	return C.GoString(&im.image.magick[0])
 }
 
+// Depth returns the pixel depth of the image,
+// usually 8.
 func (im *Image) Depth() int {
 	return int(im.image.depth)
 }
 
+// Delay returns the time this image stays visible in
+// an animation, in 1/100ths of a second. If this image
+// is not part of a sequence of animated images, it returns 0.
 func (im *Image) Delay() int {
 	return int(im.image.delay)
 }
 
+// Clone returns a copy of the image. If the image
+// has multiple frames, it copies all of them. To
+// Clone just one frame use im.Frame(i).Clone().
 func (im *Image) Clone() (*Image, error) {
 	var ex C.ExceptionInfo
 	C.GetExceptionInfo(&ex)
@@ -78,7 +97,9 @@ func (im *Image) Dispose() {
 	runtime.SetFinalizer(im, nil)
 }
 
-/* Encoding */
+// Encode writes the image to the given io.Writer, encoding
+// it according to the info parameter. Please, see the
+// Info type for the available encoding options.
 func (im *Image) Encode(w io.Writer, info *Info) error {
 	var ex C.ExceptionInfo
 	C.GetExceptionInfo(&ex)
@@ -127,6 +148,11 @@ func (im *Image) Image() *C.Image {
 	return im.image
 }
 
+// Decode tries to decode an image from the given io.Reader.
+// If the image can't be decoded or it's corrupt, an error
+// will be returned. Depending on the backend and compile
+// time options, the number of supported formats might
+// vary. Use SupportedFormats() to list the all.
 func Decode(r io.Reader) (*Image, error) {
 	data, err := ioutil.ReadAll(r)
 	if err != nil {
@@ -135,6 +161,8 @@ func Decode(r io.Reader) (*Image, error) {
 	return DecodeData(data)
 }
 
+// DecodeData works like Decode, but accepts a
+// []byte rather than an io.Reader.
 func DecodeData(data []byte) (*Image, error) {
 	return decodeData(data, 0)
 }
