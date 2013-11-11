@@ -48,6 +48,8 @@ func (im *Image) IsPalette() (bool, error) {
 	return int(b) != 0, nil
 }
 
+// AverageColor returns the image's average color
+// as a *Pixel.
 func (im *Image) AverageColor() (*Pixel, error) {
 	stats, err := im.statistics()
 	if err != nil {
