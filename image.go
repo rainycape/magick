@@ -162,7 +162,7 @@ func newImage(im *C.Image, parent *Image) *Image {
 		refImage(im)
 	} else {
 		// WARNING: Set the reference count to 0 before calling refImages.
-		// Functions hich return an image from another image (e.g. crop, resize, etc...)
+		// Functions which return an image from another image (e.g. crop, resize, etc...)
 		// copy the client_data parameter, which is what we're using for reference
 		// counting. Since the image has not been initialized yet, only this
 		// goroutine can be accessing it, so we may safely just set all the
