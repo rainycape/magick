@@ -16,11 +16,7 @@ func (im *Image) statistics() (*Statistics, error) {
 	defer C.DestroyExceptionInfo(&ex)
 	stats := C.GetImageChannelStatistics(im.image, &ex)
 	if stats != nil {
-		// Don't use MagickRelinquishMemory. There's no point
-		// in requiring the wand API only for this function and
-		// it's only a wrapper of RelinquishMagickMemory adding
-		// logging.
-		defer C.RelinquishMagickMemory(unsafe.Pointer(stats))
+		defer freeMagickMemory(unsafe.Pointer(stats))
 	}
 	if stats == nil || ex.severity != C.UndefinedException {
 		return nil, exError(&ex, "getting statistics")
