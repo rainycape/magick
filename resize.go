@@ -8,21 +8,21 @@ import "C"
 type Filter C.FilterTypes
 
 const (
-	FPoint     = C.PointFilter
-	FBox       = C.BoxFilter
-	FTriangle  = C.TriangleFilter
-	FHermite   = C.HermiteFilter
-	FHanning   = C.HanningFilter
-	FHamming   = C.HammingFilter
-	FBlackman  = C.BlackmanFilter
-	FGaussian  = C.GaussianFilter
-	FQuadratic = C.QuadraticFilter
-	FCubic     = C.CubicFilter
-	FCatrom    = C.CatromFilter
-	FMitchell  = C.MitchellFilter
-	FLanczos   = C.LanczosFilter
-	FBessel    = C.BesselFilter
-	FSinc      = C.SincFilter
+	FPoint     Filter = C.PointFilter
+	FBox       Filter = C.BoxFilter
+	FTriangle  Filter = C.TriangleFilter
+	FHermite   Filter = C.HermiteFilter
+	FHanning   Filter = C.HanningFilter
+	FHamming   Filter = C.HammingFilter
+	FBlackman  Filter = C.BlackmanFilter
+	FGaussian  Filter = C.GaussianFilter
+	FQuadratic Filter = C.QuadraticFilter
+	FCubic     Filter = C.CubicFilter
+	FCatrom    Filter = C.CatromFilter
+	FMitchell  Filter = C.MitchellFilter
+	FLanczos   Filter = C.LanczosFilter
+	FBessel    Filter = C.BesselFilter
+	FSinc      Filter = C.SincFilter
 )
 
 // Magnify is a convenience method that scales an image proportionally to twice its size.
