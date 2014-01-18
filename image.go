@@ -9,6 +9,7 @@ import "C"
 import (
 	"io"
 	"io/ioutil"
+	"os"
 	"runtime"
 	"sync"
 	"unsafe"
@@ -165,6 +166,17 @@ func Decode(r io.Reader) (*Image, error) {
 // []byte rather than an io.Reader.
 func DecodeData(data []byte) (*Image, error) {
 	return decodeData(data, 0)
+}
+
+// DecodeFile works like Decode, but accepts a
+// filename.
+func DecodeFile(filename string) (*Image, error) {
+	f, err := os.Open(filename)
+	if err != nil {
+		return nil, err
+	}
+	defer f.Close()
+	return Decode(f)
 }
 
 func decodeData(data []byte, try int) (*Image, error) {
