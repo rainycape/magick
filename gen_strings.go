@@ -1,6 +1,11 @@
 package magick
 
 // AUTOMATICALLY GENERATED WITH gondola gen -- DO NOT EDIT!
+
+import "fmt"
+
+var _ = fmt.Sprintf
+
 func (c Colorspace) String() string {
 	switch c {
 	case CMYK:
@@ -40,7 +45,152 @@ func (c Colorspace) String() string {
 	case YUV:
 		return "YUV"
 	}
-	return "unknown colorspace"
+	return fmt.Sprintf("unknown colorspace %d", c)
+}
+func (c Composite) String() string {
+	switch c {
+	case CompositeAlpha:
+		return "Alpha"
+	case CompositeAtop:
+		return "Atop"
+	case CompositeBlend:
+		return "Blend"
+	case CompositeBlur:
+		return "Blur"
+	case CompositeBumpmap:
+		return "Bumpmap"
+	case CompositeChangeMask:
+		return "ChangeMask"
+	case CompositeClear:
+		return "Clear"
+	case CompositeColorBurn:
+		return "ColorBurn"
+	case CompositeColorDodge:
+		return "ColorDodge"
+	case CompositeColorize:
+		return "Colorize"
+	case CompositeCopy:
+		return "Copy"
+	case CompositeCopyAlpha:
+		return "CopyAlpha"
+	case CompositeCopyBlack:
+		return "CopyBlack"
+	case CompositeCopyBlue:
+		return "CopyBlue"
+	case CompositeCopyCyan:
+		return "CopyCyan"
+	case CompositeCopyGreen:
+		return "CopyGreen"
+	case CompositeCopyMagenta:
+		return "CopyMagenta"
+	case CompositeCopyRed:
+		return "CopyRed"
+	case CompositeCopyYellow:
+		return "CopyYellow"
+	case CompositeDarken:
+		return "Darken"
+	case CompositeDarkenIntensity:
+		return "DarkenIntensity"
+	case CompositeDifference:
+		return "Difference"
+	case CompositeDisplace:
+		return "Displace"
+	case CompositeDissolve:
+		return "Dissolve"
+	case CompositeDistort:
+		return "Distort"
+	case CompositeDivideDst:
+		return "DivideDst"
+	case CompositeDivideSrc:
+		return "DivideSrc"
+	case CompositeDst:
+		return "Dst"
+	case CompositeDstAtop:
+		return "DstAtop"
+	case CompositeDstIn:
+		return "DstIn"
+	case CompositeDstOut:
+		return "DstOut"
+	case CompositeDstOver:
+		return "DstOver"
+	case CompositeExclusion:
+		return "Exclusion"
+	case CompositeHardLight:
+		return "HardLight"
+	case CompositeHue:
+		return "Hue"
+	case CompositeIn:
+		return "In"
+	case CompositeIntensity:
+		return "Intensity"
+	case CompositeLighten:
+		return "Lighten"
+	case CompositeLightenIntensity:
+		return "LightenIntensity"
+	case CompositeLinearBurn:
+		return "LinearBurn"
+	case CompositeLinearDodge:
+		return "LinearDodge"
+	case CompositeLinearLight:
+		return "LinearLight"
+	case CompositeLuminize:
+		return "Luminize"
+	case CompositeMathematics:
+		return "Mathematics"
+	case CompositeMinusDst:
+		return "MinusDst"
+	case CompositeMinusSrc:
+		return "MinusSrc"
+	case CompositeModulate:
+		return "Modulate"
+	case CompositeModulusAdd:
+		return "ModulusAdd"
+	case CompositeModulusSubtract:
+		return "ModulusSubtract"
+	case CompositeMultiply:
+		return "Multiply"
+	case CompositeNo:
+		return "No"
+	case CompositeOut:
+		return "Out"
+	case CompositeOver:
+		return "Over"
+	case CompositeOverlay:
+		return "Overlay"
+	case CompositePegtopLight:
+		return "PegtopLight"
+	case CompositePinLight:
+		return "PinLight"
+	case CompositePlus:
+		return "Plus"
+	case CompositeReplace:
+		return "Replace"
+	case CompositeSaturate:
+		return "Saturate"
+	case CompositeScreen:
+		return "Screen"
+	case CompositeSoftLight:
+		return "SoftLight"
+	case CompositeSrc:
+		return "Src"
+	case CompositeSrcAtop:
+		return "SrcAtop"
+	case CompositeSrcIn:
+		return "SrcIn"
+	case CompositeSrcOut:
+		return "SrcOut"
+	case CompositeSrcOver:
+		return "SrcOver"
+	case CompositeThreshold:
+		return "Threshold"
+	case CompositeUndefined:
+		return "Undefined"
+	case CompositeVividLight:
+		return "VividLight"
+	case CompositeXor:
+		return "Xor"
+	}
+	return fmt.Sprintf("unknown composite %d", c)
 }
 func (f Filter) String() string {
 	switch f {
@@ -75,7 +225,7 @@ func (f Filter) String() string {
 	case FTriangle:
 		return "Triangle"
 	}
-	return "unknown filter"
+	return fmt.Sprintf("unknown filter %d", f)
 }
 func (o Operator) String() string {
 	switch o {
@@ -134,5 +284,5 @@ func (o Operator) String() string {
 	case OpXor:
 		return "Xor"
 	}
-	return "unknown operator"
+	return fmt.Sprintf("unknown operator %d", o)
 }

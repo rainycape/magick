@@ -1,7 +1,9 @@
 strings:
-    include: Operator|Colorspace|Filter
+    include: Operator|Colorspace|Filter|Composite
     options:
         Operator:
-            slice: 2:
+            slice: "2:"
         Filter:
-            slice: 1:
+            slice: "1:"
+        Composite:
+            slice: "9:"
