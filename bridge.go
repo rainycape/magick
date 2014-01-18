@@ -39,9 +39,13 @@ func (im *Image) applyFunc(what string, f C.ImageFunc) (*Image, error) {
 	var ex C.ExceptionInfo
 	C.GetExceptionInfo(&ex)
 	defer C.DestroyExceptionInfo(&ex)
-	res := C.apply_image_func(f, im.root(), unsafe.Pointer(im.parent), btoi(im.coalesced), &ex)
+	root := im.root()
+	res := C.apply_image_func(f, root, unsafe.Pointer(im.parent), btoi(im.coalesced), &ex)
 	if res == nil {
 		return nil, exError(&ex, what)
+	}
+	if res == root {
+		return im, nil
 	}
 	ret := newImage(res, nil)
 	ret.coalesced = true
@@ -53,9 +57,13 @@ func (im *Image) applyDataFunc(what string, f C.ImageDataFunc, data interface{})
 	var ex C.ExceptionInfo
 	C.GetExceptionInfo(&ex)
 	defer C.DestroyExceptionInfo(&ex)
-	res := C.apply_image_data_func(f, im.root(), p, unsafe.Pointer(im.parent), btoi(im.coalesced), &ex)
+	root := im.root()
+	res := C.apply_image_data_func(f, root, p, unsafe.Pointer(im.parent), btoi(im.coalesced), &ex)
 	if res == nil {
 		return nil, exError(&ex, what)
+	}
+	if res == root {
+		return im, nil
 	}
 	ret := newImage(res, nil)
 	ret.coalesced = true
