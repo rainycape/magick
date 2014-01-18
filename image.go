@@ -40,6 +40,12 @@ func (im *Image) Height() int {
 	return int(im.image.rows)
 }
 
+// Rect is a conveniency function which returns a Rect
+// at (0, 0) with the image dimensions.
+func (im *Image) Rect() Rect {
+	return Rect{0, 0, uint(im.Width()), uint(im.Height())}
+}
+
 // Format returns the format used to decode
 // this image.
 func (im *Image) Format() string {
