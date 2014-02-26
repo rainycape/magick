@@ -2,8 +2,8 @@
 
 package magick
 
-// #cgo CFLAGS: -I/usr/include/GraphicsMagick
-// #cgo LDFLAGS: -lGraphicsMagick -lm
+// #cgo pkg-config: GraphicsMagick
+// #cgo LDFLAGS: -lm
 // #include <magick/api.h>
 import "C"
 
