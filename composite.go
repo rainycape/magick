@@ -99,7 +99,16 @@ func (im *Image) Composite(c Composite, draw *Image, x int, y int) error {
 	data.draw = draw.image
 	data.x = C.int(x)
 	data.y = C.int(y)
-	_, err = im.applyDataFunc("compositing", C.ImageDataFunc(C.compositeImage), &data)
+	res, err := im.applyDataFunc("compositing", C.ImageDataFunc(C.compositeImage), &data)
+	// res.image will be != than im.image when im is a non
+	// coalesced animation
+	if res.image != im.image {
+		unrefImages(im.image)
+		initializeRefCounts(res.image)
+		refImages(res.image)
+		im.image = res.image
+		dontFree(res)
+	}
 	return err
 }
 
