@@ -171,9 +171,6 @@ func (im *Image) Apply(f func(*Image) (*Image, error)) (*Image, error) {
 	if cur == nil {
 		return nil, exError(&ex, "coalescing")
 	}
-	if free {
-		defer C.DestroyImageList(cur)
-	}
 	buf := &Image{
 		parent: im,
 		image:  cur,
@@ -183,17 +180,26 @@ func (im *Image) Apply(f func(*Image) (*Image, error)) (*Image, error) {
 		return nil, err
 	}
 	prev := first.image
+	var res *Image
 	for cur := (*C.Image)(im.image.next); cur != nil; cur = (*C.Image)(cur.next) {
 		buf.image = cur
-		res, err := f(buf)
+		res, err = f(buf)
 		if err != nil {
-			return nil, err
+			break
 		}
 		dontFree(res)
 		img := res.image
-		prev.next = (*C.struct__Image)(img)
-		img.previous = (*C.struct__Image)(img)
+		if img != cur {
+			prev.next = (*C.struct__Image)(img)
+			img.previous = (*C.struct__Image)(prev)
+		}
 		prev = img
+	}
+	if free && (first.image != cur || err != nil) {
+		C.DestroyImageList(cur)
+	}
+	if err != nil {
+		return nil, err
 	}
 	return first, nil
 }
