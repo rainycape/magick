@@ -175,7 +175,8 @@ func (im *Image) Apply(f func(*Image) (*Image, error)) (*Image, error) {
 		defer C.DestroyImageList(cur)
 	}
 	buf := &Image{
-		image: cur,
+		parent: im,
+		image:  cur,
 	}
 	first, err := f(buf)
 	if err != nil {
