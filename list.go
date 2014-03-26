@@ -15,9 +15,6 @@ func (im *Image) NFrames() int {
 }
 
 func (im *Image) FrameIndex() int {
-	if im.parent != nil {
-		return 0
-	}
 	return int(C.GetImageIndexInList(im.image))
 }
 
