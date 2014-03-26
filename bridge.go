@@ -18,8 +18,10 @@ func btoi(b bool) C.int {
 
 func (im *Image) root() *C.Image {
 	cur := im.image
-	for cur.previous != nil {
-		cur = (*C.Image)(cur.previous)
+	if im.parent == nil {
+		for cur.previous != nil {
+			cur = (*C.Image)(cur.previous)
+		}
 	}
 	return cur
 }
