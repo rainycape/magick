@@ -5,6 +5,10 @@ package magick
 // #include "resize.h"
 import "C"
 
+import (
+	"fmt"
+)
+
 type Filter C.FilterTypes
 
 const (
@@ -36,9 +40,33 @@ func (im *Image) Minify() (*Image, error) {
 }
 
 // ResizeBlur returns a new image resized to the given dimensions using the provided
-// filter and blur factor (where > 1 is blurry, < 1 is sharp).
+// filter and blur factor (where > 1 is blurry, < 1 is sharp). If width or height is
+// < 0, it's calculated proportionally to the other dimension. If both of them are < 0,
+// an error is returned.
 func (im *Image) ResizeBlur(width, height int, filter Filter, blur float64) (*Image, error) {
 	var data C.ResizeData
+	if width < 0 {
+		if height < 0 {
+			return nil, fmt.Errorf("invalid resize %dx%d", width, height)
+		}
+		h := float64(im.Height())
+		var ratio float64
+		if h != 0 {
+			ratio = float64(im.Width()) / h
+		}
+		width = int(float64(height) * ratio)
+	}
+	if height < 0 {
+		if width < 0 {
+			return nil, fmt.Errorf("invalid resize %dx%d", width, height)
+		}
+		var ratio float64
+		w := float64(im.Width())
+		if w != 0 {
+			ratio = float64(im.Height()) / w
+		}
+		height = int(float64(width) * ratio)
+	}
 	data.columns = C.ulong(width)
 	data.rows = C.ulong(height)
 	data.filter = C.FilterTypes(filter)
