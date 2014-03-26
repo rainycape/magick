@@ -16,6 +16,11 @@ bridge_image_data_func(ImageDataFunc f, Image *im, void *data, ExceptionInfo *ex
 Image *
 apply_image_func(ImageFunc f, Image *image, void *parent, int is_coalesced, ExceptionInfo *ex)
 {
+    // XXX: f must either return new images or the same images in all calls. If sometimes
+    // it returns a new one and other times it returns the same image, that will cause either
+    // a crash or a memory leak. Since currently the C interface is not exposed to package users
+    // there's no need to inform them about this quirk, but must be taken into account by people
+    // writing magick code in C.
     if (parent || (!image->next && !image->previous)) {
         return f(image, ex);
     }
@@ -44,7 +49,7 @@ apply_image_func(ImageFunc f, Image *image, void *parent, int is_coalesced, Exce
             prev = res;
         }
     }
-    if (coalesced) {
+    if (coalesced && ret != image) {
         DestroyImageList(coalesced);
     }
     return ret;
@@ -81,7 +86,7 @@ apply_image_data_func(ImageDataFunc f, Image *image, void *data, void *parent, i
             prev = res;
         }
     }
-    if (coalesced) {
+    if (coalesced && ret != image) {
         DestroyImageList(coalesced);
     }
     return ret;
