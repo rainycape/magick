@@ -201,6 +201,17 @@ func decodeData(data []byte, try int) (*Image, error) {
 	return checkImage(im, nil, &ex, "decoding")
 }
 
+func initializeRefCounts(im *C.Image) {
+	for cur := (*C.Image)(im.previous); cur != nil; cur = (*C.Image)(cur.previous) {
+		p := (*int32)(unsafe.Pointer(&cur.client_data))
+		*p = 0
+	}
+	for cur := im; cur != nil; cur = (*C.Image)(cur.next) {
+		p := (*int32)(unsafe.Pointer(&cur.client_data))
+		*p = 0
+	}
+}
+
 func newImage(im *C.Image, parent *Image) *Image {
 	image := new(Image)
 	image.image = im
@@ -217,14 +228,7 @@ func newImage(im *C.Image, parent *Image) *Image {
 		// counting. Since the image has not been initialized yet, only this
 		// goroutine can be accessing it, so we may safely just set all the
 		// reference counts to 0.
-		for cur := (*C.Image)(im.previous); cur != nil; cur = (*C.Image)(cur.previous) {
-			p := (*int32)(unsafe.Pointer(&cur.client_data))
-			*p = 0
-		}
-		for cur := im; cur != nil; cur = (*C.Image)(cur.next) {
-			p := (*int32)(unsafe.Pointer(&cur.client_data))
-			*p = 0
-		}
+		initializeRefCounts(im)
 		refImages(im)
 	}
 	freeWhenDone(image)
