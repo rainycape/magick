@@ -1,19 +1,26 @@
 package magick
 
+// #include <stdlib.h>
+// extern void * gif_encode(void *im, int single, int *size);
+// #cgo LDFLAGS: -lgif
+import "C"
+
 import (
 	"bytes"
 	"errors"
 	"fmt"
 	"os/exec"
 	"strings"
+	"unsafe"
 )
 
 var (
-	gifsicleCmd   string
-	convertCmd    string
-	errNoConvert  = errors.New("error decoding GIF image: Corrupt data. Install imagemagick (convert) to try to fix it.")
-	errNoGifsicle = errors.New("error decoding GIF image: Corrupt data. Install gifsicle to try to fix it.")
-	maxGifTries   = 2
+	gifsicleCmd          string
+	convertCmd           string
+	errNoConvert         = errors.New("error decoding GIF image: Corrupt data. Install imagemagick (convert) to try to fix it.")
+	errNoGifsicle        = errors.New("error decoding GIF image: Corrupt data. Install gifsicle to try to fix it.")
+	errCouldNotEncodeGif = errors.New("error encoding GIF")
+	maxGifTries          = 2
 )
 
 func looksLikeGif(data []byte) bool {
@@ -63,6 +70,26 @@ func fixAndDecodeGif(data []byte, try int) (*Image, error) {
 		data = out.Bytes()
 	}
 	return decodeData(data, try+1)
+}
+
+// GifEncode encodes the Image as GIF using giflib
+// rather than ImageMagick or GraphicksMagick. While this
+// will result in a lower quality GIF, encoding is 9-10x
+// faster and produces files ~20% smaller.
+func (im *Image) GifEncode() ([]byte, error) {
+	var size C.int
+	var single C.int
+	if im.parent != nil {
+		single = 1
+	}
+	res := C.gif_encode(unsafe.Pointer(im.image), single, &size)
+	if res != nil {
+		p := unsafe.Pointer(res)
+		b := C.GoBytes(p, size)
+		C.free(p)
+		return b, nil
+	}
+	return nil, errCouldNotEncodeGif
 }
 
 func init() {
