@@ -3,6 +3,7 @@
 package magick
 
 // #cgo pkg-config: MagickCore
+// #cgo CFLAGS: -D_MAGICK_USES_IM
 // #cgo LDFLAGS: -lm
 // #include <magick/MagickCore.h>
 import "C"

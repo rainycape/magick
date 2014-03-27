@@ -3,6 +3,7 @@
 package magick
 
 // #cgo pkg-config: GraphicsMagick
+// #cgo CFLAGS: -D_MAGICK_USES_GM
 // #cgo LDFLAGS: -lm
 // #include <magick/api.h>
 import "C"
