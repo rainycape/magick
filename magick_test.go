@@ -252,6 +252,54 @@ func TestAverage(t *testing.T) {
 	}
 }
 
+func TestProperties(t *testing.T) {
+	im := decodeFile(t, "wizard.png")
+	count := len(im.Properties())
+	if count == 0 {
+		// not testing exact number since it varies depending
+		// on backend.
+		t.Fatal("expecting some properties, got zero")
+	}
+	if !im.SetProperty("go", "go") {
+		t.Error("property not set")
+	}
+	if len(im.Properties()) != count+1 {
+		t.Errorf("expecting %d properties, got %d instead", count+1, len(im.Properties()))
+	}
+	goVal := im.Property("go")
+	if goVal != "go" {
+		t.Errorf("expecting property go = \"go\", got go = %q", goVal)
+	}
+	if !im.SetProperty("go", "2go") {
+		t.Error("property not set")
+	}
+	if !im.HasProperty("go") {
+		t.Error("should have property")
+	}
+	goVal = im.Property("go")
+	if goVal != "2go" {
+		t.Errorf("expecting property go = \"2go\", got go = %q", goVal)
+	}
+	if !im.RemoveProperty("go") {
+		t.Error("property not removed")
+	}
+	if im.HasProperty("go") {
+		t.Error("should not have property")
+	}
+	goVal = im.Property("go")
+	if len(goVal) != 0 {
+		t.Errorf("expecting property go = \"\", got go = %q", goVal)
+	}
+	if im.RemoveProperty("go") {
+		t.Error("property removed when not present")
+	}
+	im.DestroyProperties()
+	count = len(im.Properties())
+	if count != 0 {
+		t.Errorf("expecting no properties, got %d instead", count)
+	}
+}
+
 func BenchmarkRefUnref(b *testing.B) {
 	im := decodeFile(b, "wizard.png")
 	img := im.image
