@@ -48,10 +48,10 @@ gif_buffer_write(GifFileType *ft, const GifByteType *bytes, int len)
 {
     GifBuffer *buf = ft->UserData;
     if (buf->size + len > buf->alloc) {
-        int new_size = buf->size + len * 2;
-        /*if (new_size < buf->size + len) {
+        int new_size = buf->alloc * 1.25;
+        if (new_size < buf->size + len) {
             new_size = buf->size + len;
-        }*/
+        }
         buf->data = realloc(buf->data, new_size);
         buf->alloc = new_size;
     }
@@ -64,6 +64,9 @@ void *
 gif_save(const Image *image, const ColorMapObject *color_map, Frame *frames, int count, int *size)
 {
     GifBuffer buf = {0,};
+    int estimated = count * (image->columns * image->rows);
+    buf.alloc = estimated;
+    buf.data = malloc(estimated);
     GifFileType *gif_file = EGifOpen(&buf, gif_buffer_write);
     if (!gif_file) {
         return NULL;
