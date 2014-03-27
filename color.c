@@ -3,6 +3,8 @@
 
 #include <magick/api.h>
 
+#include "macros.h"
+
 #define HISTOGRAM_SIZE 768
 
 float
@@ -31,9 +33,7 @@ calculate_image_entropy_rect(const Image *image, const RectangleInfo *rect)
     unsigned int ey = sy + height;
     int total = 0;
     for(y = sy; y < ey; ++y) {
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-        p = AcquireImagePixels(image, sx, y, width, 1, &ex);
-#pragma GCC diagnostic warning "-Wdeprecated-declarations"
+        p = ACQUIRE_IMAGE_PIXELS(image, sx, y, width, 1, &ex);
         if (!p) {
             continue;
         }

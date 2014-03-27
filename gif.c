@@ -10,6 +10,8 @@
 #include <gif_lib.h>
 #undef DrawRectangle
 
+#include "macros.h"
+
 #define NCOLORS 256
 #define GIF_APP "NETSCAPE2.0"
 
@@ -125,7 +127,7 @@ acquire_image_pixels(const Image *image, GifByteType *red, GifByteType *green, G
     int height = image->rows;
     int ii = 0;
     for(y = 0; y < height; ++y) {
-        p = AcquireImagePixels(image, 0, y, width, 1, &ex);
+        p = ACQUIRE_IMAGE_PIXELS(image, 0, y, width, 1, &ex);
         if (!p) {
             return 0;
         }
@@ -146,7 +148,7 @@ aprox_image_pixels(const Image *image, GifColorType *colors, int color_count, Gi
     ExceptionInfo ex;
     int ii;
     int jj;
-    register const PixelPacket *p = AcquireImagePixels(image, 0, 0, width, height, &ex);
+    register const PixelPacket *p = ACQUIRE_IMAGE_PIXELS(image, 0, 0, width, height, &ex);
     if (!p) {
         return 0;
     }
