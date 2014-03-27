@@ -336,3 +336,18 @@ func BenchmarkMinifyAnimated(b *testing.B) {
 		}
 	}
 }
+
+func BenchmarkGifEncode(b *testing.B) {
+	im := decodeFile(b, "Newtons_cradle_animation_book_2.gif")
+	coalesced, err := im.Coalesce()
+	if err != nil {
+		b.Fatal(err)
+	}
+	b.ResetTimer()
+	for ii := 0; ii < b.N; ii++ {
+		_, err = coalesced.GifEncode()
+		if err != nil {
+			b.Fatal(err)
+		}
+	}
+}
