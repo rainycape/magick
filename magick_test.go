@@ -7,21 +7,21 @@ import (
 )
 
 type Fataler interface {
-	Fatal(...interface{})
+	Fatalf(string, ...interface{})
 }
 
 func decodeFile(fat Fataler, name string) *Image {
 	f, err := os.Open("test_data/" + name)
 	if err != nil {
-		fat.Fatal(err)
+		fat.Fatalf("error reading %s: %s", name, err)
 	}
 	defer f.Close()
 	im, err := Decode(f)
 	if err != nil {
-		fat.Fatal(err)
+		fat.Fatalf("error decoding %s: %s", name, err)
 	}
 	if im == nil {
-		fat.Fatal("No image")
+		fat.Fatalf("%s: no image", name)
 	}
 	return im
 }
