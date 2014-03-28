@@ -230,6 +230,13 @@ func TestDecodeOptimized(t *testing.T) {
 	// This one requires gifsicle with --unoptimize and piping via convert if using GM
 	im3 := decodeFile(t, "kick_grandma.gif")
 	testImage(t, im3, 25, 240, 180, 8, "GIF")
+	im4 := decodeFile(t, "seCq.gif")
+	testImage(t, im4, 136, 270, 165, 8, "GIF")
+}
+
+func TestDecodeVideoGif(t *testing.T) {
+	im := decodeFile(t, "football.gif")
+	testImage(t, im, 347, 312, 232, 8, "GIF")
 }
 
 func TestCropResizeAnimated(t *testing.T) {
