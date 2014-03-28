@@ -99,6 +99,7 @@ typedef struct {
     GifByteType *data;
     int size;
     int alloc;
+    int pos;
 } GifBuffer;
 
 int
@@ -115,6 +116,19 @@ gif_buffer_write(GifFileType *ft, const GifByteType *bytes, int len)
     }
     memcpy(buf->data + buf->size, bytes, len);
     buf->size += len;
+    return len;
+}
+
+int
+gif_buffer_read(GifFileType *ft, GifByteType *bytes, int len)
+{
+    GifBuffer *buf = ft->UserData;
+    int rem = buf->size - buf->pos;
+    if (rem < len) {
+        len = rem;
+    }
+    memcpy(bytes, buf->data + buf->pos, len);
+    buf->pos += len;
     return len;
 }
 
