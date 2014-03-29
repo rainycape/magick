@@ -34,6 +34,13 @@ func magickSize(v uint) C.size_t {
 }
 
 func imageToBlob(info *Info, im *Image, s *C.size_t, ex *C.ExceptionInfo) unsafe.Pointer {
+	if info.info.quality != 0 {
+		quality := im.image.quality
+		im.image.quality = info.info.quality
+		defer func() {
+			im.image.quality = quality
+		}()
+	}
 	return unsafe.Pointer(C.ImagesToBlob(info.info, im.image, s, ex))
 }
 

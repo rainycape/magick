@@ -307,6 +307,25 @@ func TestProperties(t *testing.T) {
 	}
 }
 
+func TestQuality(t *testing.T) {
+	im := decodeFile(t, "wizard.png")
+	var buf1 bytes.Buffer
+	var buf2 bytes.Buffer
+	info := NewInfo()
+	info.SetFormat("JPEG")
+	info.SetQuality(10)
+	if err := im.Encode(&buf1, info); err != nil {
+		t.Fatal(err)
+	}
+	info.SetQuality(100)
+	if err := im.Encode(&buf2, info); err != nil {
+		t.Fatal(err)
+	}
+	if buf2.Len() <= buf1.Len() {
+		t.Errorf("quality = 100 generates %d bytes, quality = 10, %d - first should be bigger", buf2.Len(), buf1.Len())
+	}
+}
+
 func BenchmarkRefUnref(b *testing.B) {
 	im := decodeFile(b, "wizard.png")
 	img := im.image
