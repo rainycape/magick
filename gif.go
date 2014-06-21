@@ -53,6 +53,15 @@ func fixAndDecodeGif(data []byte, try int) (*Image, error) {
 // will result in a lower quality GIF, encoding is 9-10x
 // faster and produces files ~20% smaller.
 func (im *Image) GifEncode() ([]byte, error) {
+	if !im.coalesced {
+		coalesced, err := im.Coalesce()
+		if err != nil {
+			return nil, err
+		}
+		coalesced.parent = im.parent
+		defer coalesced.Dispose()
+		im = coalesced
+	}
 	var size C.int
 	var single C.int
 	if im.parent != nil {
