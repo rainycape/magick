@@ -42,9 +42,22 @@ func (im *Image) SetColorspace(cs Colorspace) {
 	im.image.colorspace = C.ColorspaceType(cs)
 }
 
-// TransformColorspace changes the image colorspace while also
-// changing the pixels to represent the same image in the
-// new colorspace.
+// TransformColorspace returns a new image by covnerting the original to
+// the given colorspace while also changing the pixels to represent the
+// same image in the new colorspace.
 func (im *Image) TransformColorspace(cs Colorspace) (*Image, error) {
-	return im.transformColorspace(cs)
+	clone, err := im.Clone()
+	if err != nil {
+		return nil, err
+	}
+	if err := clone.ToColorspace(cs); err != nil {
+		return nil, err
+	}
+	return clone, nil
+}
+
+// ToColorspace changes the image colorspace in place.
+func (im *Image) ToColorspace(cs Colorspace) error {
+	_, err := im.transformColorspace(cs)
+	return err
 }
