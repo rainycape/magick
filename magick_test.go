@@ -28,7 +28,7 @@ func decodeFile(fat Fataler, name string) *Image {
 }
 
 func encodeFile(t *testing.T, name string, im *Image, info *Info) {
-	f, err := os.OpenFile("test_data/out."+name, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0644)
+	f, err := os.OpenFile(filepath.Join("test_data", "out."+name), os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0644)
 	if err != nil {
 		t.Fatal(err)
 	}
