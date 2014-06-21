@@ -3,6 +3,7 @@ package magick
 import (
 	"bytes"
 	"os"
+	"path/filepath"
 	"testing"
 )
 
@@ -11,7 +12,7 @@ type Fataler interface {
 }
 
 func decodeFile(fat Fataler, name string) *Image {
-	f, err := os.Open("test_data/" + name)
+	f, err := os.Open(filepath.Join("test_data", name))
 	if err != nil {
 		fat.Fatalf("error reading %s: %s", name, err)
 	}
