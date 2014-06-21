@@ -326,6 +326,25 @@ func TestQuality(t *testing.T) {
 	}
 }
 
+func TestCompare(t *testing.T) {
+	white := decodeFile(t, "white.png")
+	red := decodeFile(t, "red.png")
+	eq, err := white.IsEqual(white)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !eq {
+		t.Errorf("image should be equal to itself")
+	}
+	eq, err = white.IsEqual(red)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if eq {
+		t.Errorf("image can't be equal to red")
+	}
+}
+
 func BenchmarkRefUnref(b *testing.B) {
 	im := decodeFile(b, "wizard.png")
 	img := im.image
