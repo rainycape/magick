@@ -362,6 +362,22 @@ func TestCompare(t *testing.T) {
 	}
 }
 
+func TestChannels(t *testing.T) {
+	white := decodeFile(t, "white.png")
+	red := decodeFile(t, "red.png")
+	wRed, err := red.ChannelImage(CRed)
+	if err != nil {
+		t.Fatal(err)
+	}
+	stats, err := white.Compare(wRed)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !stats.IsZero() {
+		t.Errorf("repeated red channel is not equal to white image: %+v", stats)
+	}
+}
+
 func BenchmarkRefUnref(b *testing.B) {
 	im := decodeFile(b, "wizard.png")
 	img := im.image

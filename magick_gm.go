@@ -33,6 +33,10 @@ func magickSize(v uint) C.ulong {
 	return C.ulong(v)
 }
 
+func magickUint(v uint) C.uint {
+	return C.uint(v)
+}
+
 func imageToBlob(info *Info, im *Image, s *C.size_t, ex *C.ExceptionInfo) unsafe.Pointer {
 	return C.ImageToBlob(info.info, im.image, s, ex)
 }
