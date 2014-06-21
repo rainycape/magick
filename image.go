@@ -155,6 +155,12 @@ func (im *Image) Image() *C.Image {
 	return im.image
 }
 
+// New returns a new RGBA image with the given size. If you
+// need more granularity, see Constitute.
+func New(width int, height int) (*Image, error) {
+	return Constitute(width, height, "RGBA", CharPixel, nil)
+}
+
 // Decode tries to decode an image from the given io.Reader.
 // If the image can't be decoded or it's corrupt, an error
 // will be returned. Depending on the backend and compile

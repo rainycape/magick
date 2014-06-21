@@ -327,6 +327,22 @@ func TestQuality(t *testing.T) {
 	}
 }
 
+func TestNewImage(t *testing.T) {
+	red := decodeFile(t, "red.png")
+	im, err := New(red.Width(), red.Height())
+	if err != nil {
+		t.Fatal(err)
+	}
+	im.Composite(CompositeCopy, red, 0, 0)
+	stats, err := red.Compare(im)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !stats.IsZero() {
+		t.Errorf("painted image not equal to source: %v", stats)
+	}
+}
+
 func TestCompare(t *testing.T) {
 	white := decodeFile(t, "white.png")
 	red := decodeFile(t, "red.png")
