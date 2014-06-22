@@ -5,10 +5,13 @@ package magick
 // #include <magick/api.h>
 // #include "bridge.h"
 //
-// int
+// Image *
 // transformImageColorspace(Image *image, void *cs, ExceptionInfo *ex) {
 //  ColorspaceType *c = cs;
-//  return TransformImageColorspace(image, *c);
+//  if (!TransformImageColorspace(image, *c)) {
+//	return NULL;
+//  }
+//  return image;
 // }
 import "C"
 
