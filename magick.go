@@ -32,3 +32,16 @@ func SupportedFormats() ([]string, error) {
 	freeMagickMemory(p)
 	return formats, nil
 }
+
+// QuantumRange returns the maximum value representable by the
+// current QuantumDepth (= pow(2, QuantumDepth) - 1).
+func QuantumRange() uint64 {
+	return 2*(1<<(uint64(C.QuantumDepth)-1)) - 1
+}
+
+// QuantumDepth returns the color depth used in magick. This value
+// is selected when compiling ImageMagick or GraphicsMagick and
+// it's usually 8.
+func QuantumDepth() uint {
+	return C.QuantumDepth
+}
