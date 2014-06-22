@@ -378,6 +378,37 @@ func TestChannels(t *testing.T) {
 	}
 }
 
+func TestPHash(t *testing.T) {
+	red := decodeFile(t, "red.png")
+	phash1, err := red.PHash()
+	if err != nil {
+		t.Fatal(err)
+	}
+	redSmall := decodeFile(t, "red-small.png")
+	phash2, err := redSmall.PHash()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if phash1 != phash2 {
+		t.Errorf("red.png and red-small.png have different phash: %v and %v (delta %v)", phash1, phash2, phash1.Compare(phash2))
+	}
+	t.Logf("red.png PHASH = %v (%v)", phash1, uint64(phash1))
+	lenna := decodeFile(t, "lenna.jpg")
+	phash3, err := lenna.PHash()
+	if err != nil {
+		t.Fatal(err)
+	}
+	lennaSmall := decodeFile(t, "lenna-small.jpg")
+	phash4, err := lennaSmall.PHash()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if phash3 != phash4 {
+		t.Errorf("lenna.jpg and lenna-small.jpg have different phash: %v and %v (delta %v)", phash3, phash4, phash3.Compare(phash4))
+	}
+	t.Logf("lenna.jpg PHASH = %v (%v)", phash3, uint64(phash3))
+}
+
 func BenchmarkRefUnref(b *testing.B) {
 	im := decodeFile(b, "wizard.png")
 	img := im.image
