@@ -17,6 +17,14 @@
 
 #define INLINE static inline
 
+#if defined(GIFLIB_MAJOR) && GIFLIB_MAJOR < 5
+    #define EGifOpen(x, y, z) EGifOpen(x, y)
+    #define EGifCloseFile(x, y) EGifCloseFile(x)
+    #define GifMakeMapObject MakeMapObject
+    #define GifFreeMapObject FreeMapObject
+    #define GifQuantizeBuffer QuantizeBuffer
+#endif
+
 typedef struct {
     GifPixelType *data;
     int x;
@@ -139,24 +147,32 @@ gif_save(const Image *image, const ColorMapObject *color_map, Frame *frames, int
     int estimated = count * (image->columns * image->rows);
     buf.alloc = estimated;
     buf.data = malloc(estimated);
-    GifFileType *gif_file = EGifOpen(&buf, gif_buffer_write);
+    GifFileType *gif_file = EGifOpen(&buf, gif_buffer_write, NULL);
     if (!gif_file) {
         return NULL;
     }
     if (EGifPutScreenDesc(gif_file, image->columns, image->rows, NCOLORS, 0, color_map) == GIF_ERROR) {
-        EGifCloseFile(gif_file);
+        EGifCloseFile(gif_file, NULL);
         return NULL;
     }
+#if defined(GIFLIB_MAJOR) && GIFLIB_MAJOR >= 5
+    if (EGifPutExtensionLeader(gif_file, APPLICATION_EXT_FUNC_CODE) == GIF_ERROR) {
+#else
     if (EGifPutExtensionFirst(gif_file, APPLICATION_EXT_FUNC_CODE, strlen(GIF_APP), GIF_APP) == GIF_ERROR) {
-        EGifCloseFile(gif_file);
+#endif
+        EGifCloseFile(gif_file, NULL);
         return NULL;
     }
     unsigned char meta[] = {
         0x01, //  data sub-block index (always 1)
         0xFF, 0xFF // 65535 repetitions - unsigned
     };
+#if defined(GIFLIB_MAJOR) && GIFLIB_MAJOR >= 5
+    if (EGifPutExtensionTrailer(gif_file) == GIF_ERROR) {
+#else
     if (EGifPutExtensionLast(gif_file, APPLICATION_EXT_FUNC_CODE, sizeof(meta), meta) == GIF_ERROR) {
-        EGifCloseFile(gif_file);
+#endif
+        EGifCloseFile(gif_file, NULL);
         return NULL;
     }
     int ii;
@@ -170,23 +186,23 @@ gif_save(const Image *image, const ColorMapObject *color_map, Frame *frames, int
             0x00, // no transparent color
         };
         if (EGifPutExtension(gif_file, GRAPHICS_EXT_FUNC_CODE, sizeof(gce), gce) == GIF_ERROR) {
-            EGifCloseFile(gif_file);
+            EGifCloseFile(gif_file, NULL);
             return NULL;
         }
         if (EGifPutImageDesc(gif_file, frame->x, frame->y, frame->width, frame->height, 0, NULL) == GIF_ERROR) {
-            EGifCloseFile(gif_file);
+            EGifCloseFile(gif_file, NULL);
             return NULL;
         }
         int yy;
         GifPixelType *p = frame->data;
         for (yy = 0; yy < frame->height; yy++, p += frame->width) {
             if (EGifPutLine(gif_file, p, frame->width) == GIF_ERROR) {
-                EGifCloseFile(gif_file);
+                EGifCloseFile(gif_file, NULL);
                 return NULL;
             }
         }
     } 
-    EGifCloseFile(gif_file);
+    EGifCloseFile(gif_file, NULL);
     *size = buf.size;
     return buf.data;
 }
@@ -290,15 +306,15 @@ gif_encode(Image *image, int single, int *size)
 
     Frame *frames = calloc(count, sizeof(*frames));
 
-    ColorMapObject *palette = MakeMapObject(NCOLORS, NULL);
+    ColorMapObject *palette = GifMakeMapObject(NCOLORS, NULL);
     int palette_size = NCOLORS;
 
     // Quantize again using giflib, since it yields a palette which produces
     // better compression, reducing the file size by 20%. Note that this second
     // quantization is very fast, because the image already has 256 colors, so
     // its effect on performance is negligible.
-    if (QuantizeBuffer(width, height, &palette_size, red, green, blue, output, palette->Colors) == GIF_ERROR) {
-        FreeMapObject(palette);
+    if (GifQuantizeBuffer(width, height, &palette_size, red, green, blue, output, palette->Colors) == GIF_ERROR) {
+        GifFreeMapObject(palette);
         gif_frames_free(frames, count);
         return NULL;
     }
@@ -321,7 +337,7 @@ gif_encode(Image *image, int single, int *size)
         frames[ii].data = data;
         
         if (!aprox_image_pixels(cur, colors, palette_size, cache, data)) {
-            FreeMapObject(palette);
+            GifFreeMapObject(palette);
             gif_frames_free(frames, count);
             pixel_cache_free(cache);
             return NULL;
@@ -329,7 +345,7 @@ gif_encode(Image *image, int single, int *size)
     }
     pixel_cache_free(cache);
     void *ret = gif_save(image, palette, frames, count, size);
-    FreeMapObject(palette);
+    GifFreeMapObject(palette);
     gif_frames_free(frames, count);
     return ret;
 }
