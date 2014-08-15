@@ -148,6 +148,24 @@ func TestGif(t *testing.T) {
 	testImage(t, cframe1, 1, 480, 360, 8, "GIF")
 }
 
+func TestGifEncode(t *testing.T) {
+	im := decodeFile(t, "Newtons_cradle_animation_book_2.gif")
+	testImage(t, im, 36, 480, 360, 8, "GIF")
+	coalesced, err := im.Coalesce()
+	if err != nil {
+		t.Fatal(err)
+	}
+	data, err := coalesced.GifEncode()
+	if err != nil {
+		t.Fatal(err)
+	}
+	im2, err := DecodeData(data)
+	if err != nil {
+		t.Fatal(err)
+	}
+	testImage(t, im2, 36, 480, 360, 8, "GIF")
+}
+
 func TestEncode(t *testing.T) {
 	im1 := decodeFile(t, "wizard.png")
 	res1, err := im1.Resize(500, 600, FQuadratic)
