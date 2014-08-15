@@ -17,12 +17,29 @@
 
 #define INLINE static inline
 
-#if defined(GIFLIB_MAJOR) && GIFLIB_MAJOR < 5
+#if !defined(GIFLIB_MAJOR) || GIFLIB_MAJOR < 5
     #define EGifOpen(x, y, z) EGifOpen(x, y)
     #define EGifCloseFile(x, y) EGifCloseFile(x)
     #define GifMakeMapObject MakeMapObject
     #define GifFreeMapObject FreeMapObject
     #define GifQuantizeBuffer QuantizeBuffer
+    #define GIF_BEGIN_APP_EXTENSION(f) EGifPutExtensionFirst(f, APPLICATION_EXT_FUNC_CODE, strlen(GIF_APP), GIF_APP)
+    #define GIF_END_APP_EXTENSION(f, m) EGifPutExtensionLast(f, APPLICATION_EXT_FUNC_CODE, sizeof(m), m)
+#else
+    #define GIF_BEGIN_APP_EXTENSION(f) ({ \
+        int ret = EGifPutExtensionLeader(f, APPLICATION_EXT_FUNC_CODE); \
+        if (ret != GIF_ERROR) { \
+            ret = EGifPutExtensionBlock(f, strlen(GIF_APP), GIF_APP); \
+        } \
+        ret; \
+    })
+    #define GIF_END_APP_EXTENSION(f, m) ({ \
+        int ret = EGifPutExtensionBlock(f, sizeof(m), m); \
+        if (ret != GIF_ERROR) { \
+            ret = EGifPutExtensionTrailer(f); \
+        } \
+        ret; \
+    })
 #endif
 
 typedef struct {
@@ -155,11 +172,7 @@ gif_save(const Image *image, const ColorMapObject *color_map, Frame *frames, int
         EGifCloseFile(gif_file, NULL);
         return NULL;
     }
-#if defined(GIFLIB_MAJOR) && GIFLIB_MAJOR >= 5
-    if (EGifPutExtensionLeader(gif_file, APPLICATION_EXT_FUNC_CODE) == GIF_ERROR) {
-#else
-    if (EGifPutExtensionFirst(gif_file, APPLICATION_EXT_FUNC_CODE, strlen(GIF_APP), GIF_APP) == GIF_ERROR) {
-#endif
+    if (GIF_BEGIN_APP_EXTENSION(gif_file) == GIF_ERROR) {
         EGifCloseFile(gif_file, NULL);
         return NULL;
     }
@@ -167,11 +180,7 @@ gif_save(const Image *image, const ColorMapObject *color_map, Frame *frames, int
         0x01, //  data sub-block index (always 1)
         0xFF, 0xFF // 65535 repetitions - unsigned
     };
-#if defined(GIFLIB_MAJOR) && GIFLIB_MAJOR >= 5
-    if (EGifPutExtensionTrailer(gif_file) == GIF_ERROR) {
-#else
-    if (EGifPutExtensionLast(gif_file, APPLICATION_EXT_FUNC_CODE, sizeof(meta), meta) == GIF_ERROR) {
-#endif
+    if (GIF_END_APP_EXTENSION(gif_file, meta) == GIF_ERROR) {
         EGifCloseFile(gif_file, NULL);
         return NULL;
     }
