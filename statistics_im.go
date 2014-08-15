@@ -3,6 +3,7 @@
 package magick
 
 // #include <magick/api.h>
+// extern double quantumRangeV();
 import "C"
 
 import (
@@ -26,13 +27,13 @@ func (im *Image) statistics() (*Statistics, error) {
 
 func newChannelStatistics(ch *C.ChannelStatistics) *ChannelStatistics {
 	return &ChannelStatistics{
-		Minimum:  float64(ch.minima / C.QuantumRange),
-		Maximum:  float64(ch.maxima / C.QuantumRange),
-		Mean:     float64(ch.mean / C.QuantumRange),
-		StdDev:   float64(ch.standard_deviation / C.QuantumRange),
-		Variance: float64(ch.variance / C.QuantumRange),
-		Kurtosis: float64(ch.kurtosis / C.QuantumRange),
-		Skewness: float64(ch.skewness / C.QuantumRange),
+		Minimum:  float64(ch.minima / C.quantumRangeV()),
+		Maximum:  float64(ch.maxima / C.quantumRangeV()),
+		Mean:     float64(ch.mean / C.quantumRangeV()),
+		StdDev:   float64(ch.standard_deviation / C.quantumRangeV()),
+		Variance: float64(ch.variance / C.quantumRangeV()),
+		Kurtosis: float64(ch.kurtosis / C.quantumRangeV()),
+		Skewness: float64(ch.skewness / C.quantumRangeV()),
 	}
 }
 
