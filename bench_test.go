@@ -2,7 +2,6 @@ package magick
 
 import (
 	"bytes"
-	"github.com/nfnt/resize"
 	"image"
 	"image/gif"
 	"image/jpeg"
@@ -11,6 +10,8 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
+
+	"github.com/nfnt/resize"
 )
 
 var (
@@ -39,7 +40,7 @@ func BenchmarkResizePngGo(b *testing.B) {
 	}
 	b.ResetTimer()
 	for ii := 0; ii < b.N; ii++ {
-		_ = resize.Resize(240, 180, im, resize.Lanczos2Lut)
+		_ = resize.Resize(240, 180, im, resize.Lanczos2)
 	}
 }
 
