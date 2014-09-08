@@ -43,25 +43,11 @@
 #endif
 
 typedef struct {
-    GifPixelType *data;
-    int x;
-    int y;
     int width;
     int height;
     int duration;
+    GifPixelType data[0];
 } Frame;
-
-INLINE void
-gif_frames_free(Frame *frames, int count)
-{
-    int ii;
-    for (ii = 0; ii < count; ii++) {
-        if (frames[ii].data) {
-            free(frames[ii].data);
-        }
-    }
-    free(frames);
-}
 
 struct _bucket {
     uint32_t key;
@@ -158,7 +144,7 @@ gif_buffer_read(GifFileType *ft, GifByteType *bytes, int len)
 }
 
 INLINE void *
-gif_save(const Image *image, const ColorMapObject *color_map, Frame *frames, int count, int *size)
+gif_save(const Image *image, const ColorMapObject *color_map, Frame *frames, int count, int frame_size, int *size)
 {
     GifBuffer buf = {0,};
     int estimated = count * (image->columns * image->rows);
@@ -185,8 +171,9 @@ gif_save(const Image *image, const ColorMapObject *color_map, Frame *frames, int
         return NULL;
     }
     int ii;
-    for (ii = 0; ii < count; ii++) {
-        Frame *frame = &frames[ii];
+    unsigned char *p = (unsigned char*)frames;
+    for (ii = 0; ii < count; ii++, p += frame_size) {
+        Frame *frame = (Frame*)p;
         // GCE
         unsigned char gce[] = {
             0x08, // no transparency
@@ -198,7 +185,7 @@ gif_save(const Image *image, const ColorMapObject *color_map, Frame *frames, int
             EGifCloseFile(gif_file, NULL);
             return NULL;
         }
-        if (EGifPutImageDesc(gif_file, frame->x, frame->y, frame->width, frame->height, 0, NULL) == GIF_ERROR) {
+        if (EGifPutImageDesc(gif_file, 0, 0, frame->width, frame->height, 0, NULL) == GIF_ERROR) {
             EGifCloseFile(gif_file, NULL);
             return NULL;
         }
@@ -288,7 +275,6 @@ gif_encode(Image *image, int single, int *size)
     int width = image->columns;
     int height = image->rows;
     int total = width * height;
-    GifByteType output[total];
     GifByteType red[total];
     GifByteType green[total];
     GifByteType blue[total];
@@ -313,7 +299,8 @@ gif_encode(Image *image, int single, int *size)
         return NULL;
     }
 
-    Frame *frames = calloc(count, sizeof(*frames));
+    size_t frame_size = sizeof(Frame) + total;
+    Frame *frames = malloc(frame_size * count);
 
     ColorMapObject *palette = GifMakeMapObject(NCOLORS, NULL);
     int palette_size = NCOLORS;
@@ -322,39 +309,39 @@ gif_encode(Image *image, int single, int *size)
     // better compression, reducing the file size by 20%. Note that this second
     // quantization is very fast, because the image already has 256 colors, so
     // its effect on performance is negligible.
-    if (GifQuantizeBuffer(width, height, &palette_size, red, green, blue, output, palette->Colors) == GIF_ERROR) {
+    if (GifQuantizeBuffer(width, height, &palette_size, red, green, blue, frames->data, palette->Colors) == GIF_ERROR) {
         GifFreeMapObject(palette);
-        gif_frames_free(frames, count);
+        free(frames);
         return NULL;
     }
 
-    frames[0].data = malloc(total);
-    memcpy(frames[0].data, output, total);
-    frames[0].width = width;
-    frames[0].height = height;
-    frames[0].duration = image->delay;
+    frames->width = width;
+    frames->height = height;
+    frames->duration = image->delay;
     GifColorType *colors = palette->Colors;
 
     Image *cur = image->next;
     PixelCache *cache = pixel_cache_new();
+    unsigned char *p = (unsigned char*)frames;
     int ii;
     for (ii = 1; ii < count; ii++, cur = cur->next) {
-        frames[ii].width = width;
-        frames[ii].height = height;
-        frames[ii].duration = cur->delay;
-        GifPixelType *data = malloc(total);
-        frames[ii].data = data;
+        p += frame_size;
+        Frame *frame = (Frame*)p;
+        frame->width = width;
+        frame->height = height;
+        frame->duration = cur->delay;
+        GifPixelType *data = frame->data;
         
         if (!aprox_image_pixels(cur, colors, palette_size, cache, data)) {
             GifFreeMapObject(palette);
-            gif_frames_free(frames, count);
+            free(frames);
             pixel_cache_free(cache);
             return NULL;
         }
     }
     pixel_cache_free(cache);
-    void *ret = gif_save(image, palette, frames, count, size);
+    void *ret = gif_save(image, palette, frames, count, frame_size, size);
     GifFreeMapObject(palette);
-    gif_frames_free(frames, count);
+    free(frames);
     return ret;
 }
