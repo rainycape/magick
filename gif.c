@@ -284,7 +284,7 @@ gif_encode(Image *image, int single, int *size)
     int count = GetImageListLength(image);
     QuantizeInfo info;
     GetQuantizeInfo(&info);
-    info.dither = 1;
+    info.dither = 0;
     info.number_colors = NCOLORS;
     QuantizeImage(&info, image);
     if (count > 1) {
