@@ -74,6 +74,8 @@ func (im *Image) compositeOperator(c Composite) (int, error) {
 		cc = C.UndefinedCompositeOp
 	case CompositeXor:
 		cc = C.XorCompositeOp
+	case CompositeAlpha:
+		cc = C.CopyOpacityCompositeOp
 	default:
 		return 0, notImplementedError(fmt.Sprintf("composite %s", c))
 	}
