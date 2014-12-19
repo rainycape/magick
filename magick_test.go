@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"os"
 	"path/filepath"
+	"reflect"
 	"testing"
 )
 
@@ -425,6 +426,67 @@ func TestPHash(t *testing.T) {
 		t.Errorf("lenna.jpg and lenna-small.jpg have different phash: %v and %v (delta %v)", phash3, phash4, phash3.Compare(phash4))
 	}
 	t.Logf("lenna.jpg PHASH = %v (%v)", phash3, uint64(phash3))
+}
+
+func TestPixels(t *testing.T) {
+	rgba := decodeFile(t, "rgba.png")
+	allExpected := []*Pixel{
+		{Red: 255},
+		{Green: 255},
+		{Blue: 255},
+		{Opacity: 127},
+	}
+	leftExpected := []*Pixel{
+		allExpected[0],
+		allExpected[2],
+	}
+	rightExpected := []*Pixel{
+		allExpected[1],
+		allExpected[3],
+	}
+	runPixelTests := func() {
+		px1, err := rgba.Pixels(rgba.Rect())
+		if err != nil {
+			t.Fatal(err)
+		}
+		if !reflect.DeepEqual(px1, allExpected) {
+			t.Errorf("expecting pixels %v, got %v instead", allExpected, px1)
+		}
+		px2, err := rgba.Pixels(Rect{Width: 1, Height: 2})
+		if err != nil {
+			t.Fatal(err)
+		}
+		if !reflect.DeepEqual(px2, leftExpected) {
+			t.Errorf("expecting left pixels %v, got %v instead", leftExpected, px2)
+		}
+		px3, err := rgba.Pixels(Rect{X: 1, Width: 1, Height: 2})
+		if err != nil {
+			t.Fatal(err)
+		}
+		if !reflect.DeepEqual(px3, rightExpected) {
+			t.Errorf("expecting right pixels %v, got %v instead", rightExpected, px3)
+		}
+	}
+	// First test with the image as it's loaded
+	runPixelTests()
+	// Change the green pixel to blue and test again
+	if err := rgba.SetPixel(1, 0, &Pixel{Blue: 255}); err != nil {
+		t.Fatal(err)
+	}
+	allExpected[1].Green = 0
+	allExpected[1].Blue = 255
+	runPixelTests()
+	// Encode the image, decode it and check again
+	var buf bytes.Buffer
+	if err := rgba.Encode(&buf, nil); err != nil {
+		t.Fatal(err)
+	}
+	var err error
+	rgba, err = DecodeData(buf.Bytes())
+	if err != nil {
+		t.Fatal(err)
+	}
+	runPixelTests()
 }
 
 func BenchmarkRefUnref(b *testing.B) {
