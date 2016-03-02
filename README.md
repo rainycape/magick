@@ -1,6 +1,8 @@
 magick image library for Go (golang)
 ===================================
 
+[![GoDoc](https://godoc.org/github.com/rainycape/magick?status.svg)](https://godoc.org/github.com/rainycape/magick)
+
 ImageMagick bindings for Go (golang)
 
 Requires Go 1.2 (or a 1.2 release candidate) due to C function
@@ -16,9 +18,8 @@ respective development packages.
 Then, install this package by running.
 
 ```
-    go get gopkgs.com/magick.v1
+    go get github.com/rainycape/magick
 ```
 
-For documentation and available versions, see http://gopkgs.com/magick.
 Some functions are not documented. For those, see the MagickCore documentation
 at http://www.imagemagick.org/script/magick-core.php.
