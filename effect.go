@@ -5,10 +5,7 @@ package magick
 // #include "effect.h"
 import "C"
 
-import (
-	"fmt"
-	"unsafe"
-)
+import "fmt"
 
 // Convolve applies the given convolution kernel to the image. The
 // order parameter must be a non-negative odd number, while the kernel
@@ -29,6 +26,7 @@ func (im *Image) Convolve(order int, kernel []float64) (*Image, error) {
 	}
 	var data C.ConvolveData
 	data.order = C.int(order)
-	data.kernel = (*C.double)(unsafe.Pointer(&kernel[0]))
+	data.kernel = float64SliceToDoublePtr(kernel)
+	defer freeDoublePtr(data.kernel)
 	return im.applyDataFunc("convolving", C.ImageDataFunc(C.convolveImage), &data)
 }

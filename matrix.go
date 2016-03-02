@@ -133,19 +133,25 @@ func (im *Image) FloatMatrix() (FloatMatrix, error) {
 	}
 	width := im.Width()
 	height := im.Height()
-	m := make([][]float64, width)
-	ptrs := make([]unsafe.Pointer, width)
-	for ii := range m {
-		col := make([]float64, height)
-		m[ii] = col
-		ptrs[ii] = unsafe.Pointer(&col[0])
+	ptrs := make([]*C.double, width)
+	for ii := range ptrs {
+		ptrs[ii] = allocDoublePtr(height)
 	}
+	defer func() {
+		for _, p := range ptrs {
+			freeDoublePtr(p)
+		}
+	}()
 	var ex C.ExceptionInfo
 	C.GetExceptionInfo(&ex)
 	defer C.DestroyExceptionInfo(&ex)
 	C.image_matrix(im.image, (**C.double)(unsafe.Pointer(&ptrs[0])), &ex)
 	if ex.severity != C.UndefinedException {
 		return nil, exError(&ex, "generating float matrix")
+	}
+	m := make([][]float64, width)
+	for ii := range m {
+		m[ii] = doublePtrToFloat64Slice(ptrs[ii], height)
 	}
 	return FloatMatrix(m), nil
 }
