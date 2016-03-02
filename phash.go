@@ -20,7 +20,7 @@ func (p PHash) String() string {
 // Compare returns a number between in the [0,1] interval.
 // The difference is calculated as number of different bits
 // / 64. This means 0 indicates that the hashes are equal,
-// whie 1 indicates that the hashes have no bits in common.
+// while 1 indicates that the hashes have no bits in common.
 func (p PHash) Compare(q PHash) float64 {
 	var c uint
 	v := uint64(p) ^ uint64(q)
