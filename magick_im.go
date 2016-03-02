@@ -73,11 +73,3 @@ type notImplementedError string
 func (e notImplementedError) Error() string {
 	return fmt.Sprintf("magick does not implement %s when built against ImageMagick. Build magick against GraphicsMagick to use it.", string(e))
 }
-
-func cleanup() {
-	C.MagickCoreTerminus()
-}
-
-func init() {
-	C.MagickCoreGenesis(nil, magickBool(false))
-}

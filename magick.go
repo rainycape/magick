@@ -1,6 +1,7 @@
 package magick
 
 // #include <magick/api.h>
+// extern void magick_init();
 import "C"
 
 // Backend returns the name of the library backend
@@ -44,4 +45,8 @@ func QuantumRange() uint64 {
 // it's usually 8.
 func QuantumDepth() uint {
 	return C.QuantumDepth
+}
+
+func init() {
+	C.magick_init()
 }
