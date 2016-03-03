@@ -8,6 +8,14 @@ typedef struct {
     double *kernel;
 } ConvolveData;
 
+typedef struct {
+	double radius;
+	double sigma;
+	double amount;
+	double threshold;
+} UnsharpMaskData;
+
 Image * convolveImage(Image *image, void *data, ExceptionInfo *ex);
+Image * unsharpMaskImage(Image *image, void *data, ExceptionInfo *ex);
 
 #endif
