@@ -2,6 +2,7 @@ package magick
 
 // #include <magick/api.h>
 // #include "bridge.h"
+// #include "shear.h"
 import "C"
 
 // AffineTransform returns a new image created by transforming

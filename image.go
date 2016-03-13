@@ -65,6 +65,12 @@ func (im *Image) Delay() int {
 	return int(im.image.delay)
 }
 
+// Strip removes all profiles and text attributes from the image.
+func (im *Image) Strip() bool {
+	success := int(C.StripImage(im.image))
+	return success > 0
+}
+
 // Clone returns a copy of the image. If the image
 // has multiple frames, it copies all of them. To
 // Clone just one frame use im.Frame(i).Clone().
