@@ -23,6 +23,12 @@ const (
 	// the image to a given ratio and end up with the most 'meaningful'
 	// part of the image.
 	CSMaxEntropy
+	// When cropping to a given aspect ratio, grab the section of the
+	// image with higher entropy. This is useful when you want to crop
+	// the image to a given ratio and end up with the most 'meaningful'
+	// part of the image.
+	// Caculate max entropy rect in C, so it is faster.
+	CSMaxEntropyFast
 )
 
 func (im *Image) Chop(r Rect) (*Image, error) {
@@ -145,6 +151,13 @@ func (im *Image) cropToRatioMaxEntropy(ratio, imWidth, imHeight, imRatio float64
 	return im.Crop(r)
 }
 
+func (im *Image) cropToRatioMaxEntropyFast(ratio, imWidth, imHeight, imRatio float64) (*Image, error) {
+	rect := C.calculate_max_entropy_rect(C.double(ratio), im.image, C.double(imWidth), C.double(imHeight), C.double(imRatio))
+	defer C.free(unsafe.Pointer(rect))
+	r := Rect{int(rect.x), int(rect.y), uint(rect.width), uint(rect.height)}
+	return im.Crop(r)
+}
+
 func (im *Image) cropToRatioCenter(ratio, imWidth, imHeight, imRatio float64) (*Image, error) {
 	var r Rect
 	if imRatio > ratio {
@@ -174,6 +187,8 @@ func (im *Image) CropToRatio(ratio float64, cs CropStrategy) (*Image, error) {
 	if ratio != imRatio {
 		if cs == CSMaxEntropy {
 			return im.cropToRatioMaxEntropy(ratio, imWidth, imHeight, imRatio)
+		} else if cs == CSMaxEntropyFast {
+			return im.cropToRatioMaxEntropyFast(ratio, imWidth, imHeight, imRatio)
 		}
 		return im.cropToRatioCenter(ratio, imWidth, imHeight, imRatio)
 	}
