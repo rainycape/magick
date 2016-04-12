@@ -7,6 +7,7 @@ package magick
 import "C"
 
 import (
+	"fmt"
 	"io"
 	"io/ioutil"
 	"os"
@@ -145,6 +146,14 @@ func (im *Image) Encode(w io.Writer, info *Info) error {
 	b := goBytes(mem, int(s))
 	w.Write(b)
 	C.free(mem)
+	return nil
+}
+
+// Strip strips the image of its extra meta (exif) data
+func (im *Image) Strip() (err error) {
+	if C.StripImage(im.image) == C.MagickFalse {
+		return fmt.Errorf("could not strip image")
+	}
 	return nil
 }
 
