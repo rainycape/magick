@@ -5,6 +5,7 @@ package magick
 import "C"
 
 import (
+	"fmt"
 	"runtime"
 	"unsafe"
 )
@@ -45,6 +46,10 @@ func (in *Info) SetQuality(q uint) {
 	in.info.quality = magickSize(q)
 }
 
+func (in *Info) SetDensity(x_density uint, y_density uint) {
+	in.info.density = C.CString(fmt.Sprintf("%dx%d", x_density, y_density))
+}
+
 // Colorspace returns the colorspace used when encoding the image.
 func (in *Info) Colorspace() Colorspace {
 	return Colorspace(in.info.colorspace)
@@ -57,13 +62,18 @@ func (in *Info) SetColorspace(cs Colorspace) {
 	in.info.colorspace = C.ColorspaceType(cs)
 }
 
+func NewBaseInfo() *Info {
+	cinfo := C.CloneImageInfo(nil)
+	info := new(Info)
+	info.info = cinfo
+	return info
+}
+
 // NewInfo returns a newly allocated *Info structure. Do not
 // create Info objects directly, since they need to allocate
 // some internal structures while being created.
 func NewInfo() *Info {
-	cinfo := C.CloneImageInfo(nil)
-	info := new(Info)
-	info.info = cinfo
+	info := NewBaseInfo()
 	runtime.SetFinalizer(info, func(i *Info) {
 		if i.info != nil {
 			C.DestroyImageInfo(i.info)

@@ -177,7 +177,13 @@ func Decode(r io.Reader) (*Image, error) {
 // DecodeData works like Decode, but accepts a
 // []byte rather than an io.Reader.
 func DecodeData(data []byte) (*Image, error) {
-	return decodeData(data, 0)
+	return decodeData(data, 0, nil)
+}
+
+// DecodeDataWithInfo works like DecodeData, but accepts an
+// info argument as well (like Encode)
+func DecodeDataWithInfo(data []byte, info *Info) (*Image, error) {
+	return decodeData(data, 0, info.info)
 }
 
 // DecodeFile works like Decode, but accepts a
@@ -191,11 +197,13 @@ func DecodeFile(filename string) (*Image, error) {
 	return Decode(f)
 }
 
-func decodeData(data []byte, try int) (*Image, error) {
+func decodeData(data []byte, try int, info *C.ImageInfo) (*Image, error) {
 	if len(data) == 0 {
 		return nil, ErrNoData
 	}
-	info := C.CloneImageInfo(nil)
+	if info == nil {
+		info = C.CloneImageInfo(nil)
+	}
 	defer C.DestroyImageInfo(info)
 	var ex C.ExceptionInfo
 	C.GetExceptionInfo(&ex)

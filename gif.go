@@ -45,7 +45,7 @@ func fixAndDecodeGif(data []byte, try int) (*Image, error) {
 	if err != nil {
 		return nil, err
 	}
-	return decodeData(data, try+1)
+	return decodeData(data, try+1, nil)
 }
 
 // GifEncode encodes the Image as GIF using giflib
