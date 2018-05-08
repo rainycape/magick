@@ -160,7 +160,6 @@ func (im *Image) GetBytes() ([]byte, error) {
 	if mem == nil {
 		return []byte{}, exError(&ex, "encoding")
 	}
-	pretty.Println(im)
 	b := goBytes(mem, int(s))
 	C.free(mem)
 	return b, nil
