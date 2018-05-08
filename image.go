@@ -148,6 +148,24 @@ func (im *Image) Encode(w io.Writer, info *Info) error {
 	return nil
 }
 
+// Get buffer image for tratament in memory
+func (im *Image) GetBytes() ([]byte, error) {
+	var ex C.ExceptionInfo
+	C.GetExceptionInfo(&ex)
+	defer C.DestroyExceptionInfo(&ex)
+	im.mu.Lock()
+	var s C.size_t
+	mem := imageToBlob(nil, im, &s, &ex)
+	im.mu.Unlock()
+	if mem == nil {
+		return []byte{}, exError(&ex, "encoding")
+	}
+	pretty.Println(im)
+	b := goBytes(mem, int(s))
+	C.free(mem)
+	return b, nil
+}
+
 // Image returns the underlying *C.Image. This is useful for
 // calling GM or IM directly and performing operations which
 // are not yet supported by magick.
